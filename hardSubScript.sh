@@ -31,7 +31,6 @@ for i in *; do
 
         # encode with specified 3 streams, save to temp.mkv in output folder
         echo "processing $i with mappings video:$video audio:$audio subtitle:$subtitle"
-        # -map 0:0 -map 0:1 -map 0:3
         ffmpeg -loglevel panic -i "$i" \
             -map 0:"$video" -map 0:"$audio" -map 0:"$subtitle" \
             -c:v copy -c:a copy -c:s copy \
