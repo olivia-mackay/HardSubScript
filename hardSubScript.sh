@@ -17,16 +17,27 @@ for i in *; do
         filename="${i%.*}"
         start=`date +%s`
 
-        # save info to file and grep for our mappings
-        ffmpeg -i "$i" &> "$info"
-        video=`grep "Video" "$info" | gawk '{print $1}' FS="(" | gawk '{print $2}' FS=":"`
-        audio=`grep "(jpn): Audio" "$info" | gawk '{print $1}' FS="(" | gawk '{print $2}' FS=":"`
-        subtitle=`grep "Subtitle" "$info" | gawk '{print $1}' FS="(" | gawk '{print $2}' FS=":"`
+        if [ "$#" -eq 1 ]; then
+            # save info to file and grep for our mappings
+            ffmpeg -i "$i" &> "$info"
+            video=`grep "Video" "$info" | gawk '{print $1}' FS="(" | gawk '{print $2}' FS=":"`
+            audio=`grep "(jpn): Audio" "$info" | gawk '{print $1}' FS="(" | gawk '{print $2}' FS=":"`
+            subtitle=`grep "Subtitle" "$info" | gawk '{print $1}' FS="(" | gawk '{print $2}' FS=":"`
+        elif [ "$#" -eq 3 ]; then
+            # assume our user was nice and gave us the stream info themselves
+            video=$2
+            audio=$3
+            subtitle=$4
+        else
+            echo "Please provide a either directory or a directory and 3 stream mapping values to apply to the directory" <&2;
+            exit 1
+        fi
 
         # validate mapping values
         re='^[0-9]+$'
         if ! [[ $video =~ $re ]] || ! [[ $audio =~ $re ]] || ! [[ $subtitle =~ $re ]]; then
-            echo "one of our mapping values were invalid" >&2; exit 1
+            echo "one of our mapping values were invalid" >&2;
+            exit 1
         fi
 
         # encode with specified 3 streams, save to temp.mkv in output folder
