@@ -29,14 +29,14 @@ for i in *; do
             audio=$3
             subtitle=$4
         else
-            echo "Please provide a either directory or a directory and 3 stream mapping values to apply to the directory" <&2;
+            echo "Please provide a directory or a directory and 3 stream mapping values" <&2;
             exit 1
         fi
 
         # validate mapping values
         re='^[0-9]+$'
         if ! [[ $video =~ $re ]] || ! [[ $audio =~ $re ]] || ! [[ $subtitle =~ $re ]]; then
-            echo "one of our mapping values were invalid" >&2;
+            echo "one of the provided mapping values were invalid" >&2;
             exit 1
         fi
 
